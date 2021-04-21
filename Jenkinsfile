@@ -2,11 +2,7 @@ pipeline {
     
     
     stages {
-        stage("init") {
-            steps {
-                echo 'this is init stage'
-            }
-        }
+        
         stage("build") {
             steps {
                 echo 'this is build stage'
@@ -16,6 +12,11 @@ pipeline {
             
             steps {
                 echo 'this is test stage'
+            }
+        }
+        stage("deploy") {
+            steps {
+                echo 'this is deploy stage'
             }
         }
         
