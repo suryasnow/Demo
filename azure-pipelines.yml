@@ -69,7 +69,7 @@ stages:
             steps:
             - task: ServiceNow-DevOps-Server-Artifact-Registration@1
               inputs:
-                connectedServiceName: 'emppsinha3-SnDevOpsProject-ServiceNow DevOps Service Connection'
+                connectedServiceName: 'ADO_S_CONNECTION1'
                 artifactRegistrationPayload: |
                   {
                      "artifacts": [
