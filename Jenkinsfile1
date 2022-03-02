@@ -31,7 +31,7 @@ pipeline {
                {"artifacts": 
                   [
                      {
-                        "name": "avgbrewingapp-mvp.jar",
+                        "name": "avgbrewingapp-mvp1.jar",
                         "version":"0.${env.BUILD_NUMBER}.0",
                         "semanticVersion": "0.${env.BUILD_NUMBER}.0",
                         "repositoryName": "bm-artifacts-repo"
@@ -43,7 +43,7 @@ pipeline {
               {"artifacts": 
                [
                   {
-                     "name": "avgbrewingapp-mvp.zip",
+                     "name": "avgbrewingapp-mvp1.zip",
                      "repositoryName": "bm-artifacts-repo",
                      "pipelineName": "Average App Pipeline",
                      "taskExecutionNumber":"${env.BUILD_NUMBER}",
