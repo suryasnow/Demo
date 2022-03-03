@@ -39,6 +39,12 @@ pipeline {
                     ]
                  }""")
                  
+                
+           }
+        }
+  
+      stage("Deploy") {
+             steps{ 
                  snDevOpsPackage(name: "avgbrewingapp", artifactsPayload: """
               {"artifacts": 
                [
@@ -54,12 +60,6 @@ pipeline {
                 }""")
                 
               snDevOpsChange()
-           }
-        }
-  
-      stage("Deploy") {
-             steps{ 
-                
                   echo ">> Deploy in prod"
               }
       }      
