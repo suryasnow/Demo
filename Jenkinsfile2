@@ -30,7 +30,7 @@ pipeline {
                {"artifacts": 
                   [
                      {
-                        "name": "avgbrewingapp-mvp33.jar",
+                        "name": "avgbrewingapp-mvp31.jar",
                         "version":"0.${env.BUILD_NUMBER}.0",
                         "semanticVersion": "0.${env.BUILD_NUMBER}.0",
                         "repositoryName": "bm-artifacts-repo",
@@ -41,11 +41,16 @@ pipeline {
                        }
                     ]
                  }""")
-                 snDevOpsPackage(name: "avgbrewingapp-pkg", artifactsPayload: """
+                 
+           }
+        }
+      stage("Deploy") {
+             steps{ 
+             snDevOpsPackage(name: "avgbrewingapp-pkg2", artifactsPayload: """
               {"artifacts": 
                [
                   {
-                    "name": "avgbrewingapp-mvp33.jar",
+                    "name": "avgbrewingapp-mvp31.jar",
                     "version":"0.${env.BUILD_NUMBER}.0",
                     "semanticVersion": "0.${env.BUILD_NUMBER}.0",
                     "repositoryName": "bm-artifacts-repo",
@@ -57,10 +62,6 @@ pipeline {
                  ]
                 }""")
               snDevOpsChange()
-           }
-        }
-      stage("Deploy") {
-             steps{ 
                   echo ">> Deploy in prod"
               }
       }      
