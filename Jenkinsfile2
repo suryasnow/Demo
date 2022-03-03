@@ -1,82 +1,68 @@
 pipeline {
-    agent any
-    tools {
-        maven 'Maven'
-    }
-    stages {
-        stage("checkout") {
-            steps {
-                
-                echo "Building Pipeline" 
-                checkout scm
-            }
-        }
-
-        stage("build") {
-            steps {
-                
-                sh 'mvn clean install -DskipTests'
-                echo 'Building..Pipeline'
-                echo "Pipeline name is ${env.JOB_NAME}"
-     echo "Pipleine run rumber is ${env.BUILD_NUMBER}"
-     echo "Stage name is ${env.STAGE_NAME}"
-     echo "GIT branch is ${env.GIT_BRANCH}"
-                echo "globalprops -- ${env.snartifacttoolId} -- ${env.snhost} -- ${env.snuser} -- ${env.snpassword} ";
-  
- snDevOpsArtifact(artifactsPayload:"""{"artifacts": [{"name": "devops_pipeline_demo.jar","version": "${version}","semanticVersion": "${semanticVersion}","repositoryName": "devops_pipeline_demo"}],"stageName": "build"}""")            
-
-        }
-       }
-        
- stage('inttests') {
-            steps {
-
-                echo "Integration Test"
-                sh "mvn test"
-                sleep 5
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml' 
-                }
-          }
-        }
- 
-        stage("stage") {
-             
-                    steps{
-   snDevOpsPackage(name: "balu-package", artifactsPayload:"""{"artifacts": [{"name": "devops_pipeline_demo.jar","version": "${version}","semanticVersion": "${semanticVersion}","repositoryName": "devops_pipeline_demo"}],"stageName": "stage"}""")            
-
-   snDevOpsChange()
-                        echo "deploy in prod"
-                   }
-                
-        }
- 
- stage('unit-tests') {
-            steps {
-
-                echo "Unit Test"
-                sh "mvn test"
-                sleep 5
-
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml' 
-                }
-          }
-        }
- 
-        stage("deploy") {
-             
-                    steps{
-                        
-   echo "deploy in prod"
-                   }
-                
-        }
- 
-    }
-
+   agent any
+   tools {
+      maven 'Maven'
+    }
+   stages {
+       stage("Build") {
+                steps {
+                    echo "Building" 
+                    sh 'mvn -X clean install -DskipTests'
+            }
+        }
+        stage("Test") {
+           steps {
+               echo "Testing"
+               sh 'mvn test'
+            }
+          post {
+                always {
+                    junit '**/target/surefire-reports/*.xml' 
+                }
+          }
+        }
+      stage("Create Artifact for prod") {
+           steps {
+              echo "Creating artifact"
+              sh 'mvn package'
+              sleep 3
+              snDevOpsArtifact(artifactsPayload:"""
+               {"artifacts": 
+                  [
+                     {
+                        "name": "avgbrewingapp-mvp33.jar",
+                        "version":"0.${env.BUILD_NUMBER}.0",
+                        "semanticVersion": "0.${env.BUILD_NUMBER}.0",
+                        "repositoryName": "bm-artifacts-repo",
+                        "pipelineName": "Average App Pipeline",
+                        "taskExecutionNumber":"${env.BUILD_NUMBER}",
+                        "stageName":"Create Artifact for prod",
+                        "branchName": "master"
+                       }
+                    ]
+                 }""")
+                 snDevOpsPackage(name: "avgbrewingapp-pkg", artifactsPayload: """
+              {"artifacts": 
+               [
+                  {
+                    "name": "avgbrewingapp-mvp33.jar",
+                    "version":"0.${env.BUILD_NUMBER}.0",
+                    "semanticVersion": "0.${env.BUILD_NUMBER}.0",
+                    "repositoryName": "bm-artifacts-repo",
+                    "pipelineName": "Average App Pipeline",
+                    "taskExecutionNumber":"${env.BUILD_NUMBER}",
+                    "stageName":"Create Artifact for prod",
+                    "branchName": "master"
+                   }
+                 ]
+                }""")
+              snDevOpsChange()
+           }
+        }
+      stage("Deploy") {
+             steps{ 
+                  echo ">> Deploy in prod"
+              }
+      }      
+  }
 }
