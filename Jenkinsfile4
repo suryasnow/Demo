@@ -85,7 +85,7 @@ pipeline {
                               "repositoryName": "bm-artifacts-repo",
                               "pipelineName": "Average App Pipeline",
                               "taskExecutionNumber":"${env.BUILD_NUMBER}",
-                             "stageName":"Stage1",
+                             "stageName":"Stage4",
                               "branchName": "master"
                              }
                          ]
@@ -104,7 +104,7 @@ pipeline {
                             "repositoryName": "bm-artifacts-repo",
                             "pipelineName": "Average App Pipeline",
                             "taskExecutionNumber":"${env.BUILD_NUMBER}",
-                            "stageName":"Stage1",
+                            "stageName":"Stage4",
                             "branchName": "master"
                         }
                         ]
