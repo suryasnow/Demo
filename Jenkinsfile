@@ -51,7 +51,7 @@ pipeline {
               {"artifacts": 
                [
                   {
-                    "name": "avgbrewingapp-mvp31.jar",
+                    "name": "avgbrewingapp-mvp_surya.jar",
                     "version":"0.${env.BUILD_NUMBER}.0",
                     "semanticVersion": "0.${env.BUILD_NUMBER}.0",
                     "repositoryName": "bm-artifacts-repo",
