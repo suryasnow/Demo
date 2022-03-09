@@ -31,7 +31,7 @@ pipeline {
                {"artifacts": 
                   [
                      {
-                        "name": "avgbrewingapp-mvp3.jar",
+                        "name": "avgbrewingapp-mvp4.jar",
                         "version":"0.${env.BUILD_NUMBER}.0",
                         "semanticVersion": "0.${env.BUILD_NUMBER}.0",
                         "repositoryName": "bm-artifacts-repo"
@@ -49,7 +49,7 @@ pipeline {
               {"artifacts": 
                [
                   {
-                     "name": "avgbrewingapp-mvp3.jar",
+                     "name": "avgbrewingapp-mvp4.jar",
                      "repositoryName": "bm-artifacts-repo",
                      "pipelineName": "Average App Pipeline",
                      "taskExecutionNumber":"${env.BUILD_NUMBER}",
@@ -59,7 +59,7 @@ pipeline {
                  ]
                 }""")
                 
-              snDevOpsChange()
+             
                   echo ">> Deploy in prod"
               }
       }      
