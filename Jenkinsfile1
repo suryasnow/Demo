@@ -45,7 +45,7 @@ pipeline {
                      "name": "sp-boot-app.jar",
         "repositoryName": "MSNAutomation",
         "version": "1.34",
-        "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+        "pipelineName":"Average App Pipeline",
         "taskExecutionNumber":"$(build.buildId)",
         "stageName":"$(system.jobDisplayName)",
          "attemptNumber":"$(system.jobAttempt)",
