@@ -52,14 +52,6 @@ pipeline {
                  ]
                 }""")
            }
-        }
-  
-      stage("Deploy") {
-             steps{
-                  snDevOpsChange()
-                  echo ">> Deploy in prod"
-              }
-      }      
-      
+        }      
   }
 }
