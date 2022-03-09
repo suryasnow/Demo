@@ -31,34 +31,37 @@ pipeline {
                {"artifacts": 
                   [
                      {
-                        "name": "avgbrewingapp-mvp4.jar",
+                        "name": "avgbrewingapp-mvp31.jar",
                         "version":"0.${env.BUILD_NUMBER}.0",
                         "semanticVersion": "0.${env.BUILD_NUMBER}.0",
-                        "repositoryName": "bm-artifacts-repo"
+                        "repositoryName": "bm-artifacts-repo",
+                        "pipelineName": "Average App Pipeline",
+                        "taskExecutionNumber":"${env.BUILD_NUMBER}",
+                        "stageName":"Create Artifact for prod",
+                        "branchName": "master"
                        }
                     ]
                  }""")
                  
-                
            }
         }
-  
       stage("Deploy") {
              steps{ 
-                 snDevOpsPackage(name: "avgbrewingapp", artifactsPayload: """
+             snDevOpsPackage(name: "avgbrewingapp-pkg2", artifactsPayload: """
               {"artifacts": 
                [
                   {
-                     "name": "avgbrewingapp-mvp4.jar",
-                     "repositoryName": "bm-artifacts-repo",
-                     "pipelineName": "Average App Pipeline",
-                     "taskExecutionNumber":"${env.BUILD_NUMBER}",
-                     "stageName":"Create Artifact for prod",
-                     "branchName": "master"
+                    "name": "avgbrewingapp-mvp31.jar",
+                    "version":"0.${env.BUILD_NUMBER}.0",
+                    "semanticVersion": "0.${env.BUILD_NUMBER}.0",
+                    "repositoryName": "bm-artifacts-repo",
+                    "pipelineName": "Average App Pipeline",
+                    "taskExecutionNumber":"${env.BUILD_NUMBER}",
+                    "stageName":"Create Artifact for prod",
+                    "branchName": "master"
                    }
                  ]
                 }""")
-                
              
                   echo ">> Deploy in prod"
               }
