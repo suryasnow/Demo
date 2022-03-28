@@ -15,10 +15,9 @@ pipeline {
           
         }
      stage("Deploy") {
-             steps{ 
-             
-       
+             steps{
                   echo ">> Deploy in prod"
+                  snDevOpsChange()
               }
       }      
       
