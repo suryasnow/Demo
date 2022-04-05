@@ -31,25 +31,22 @@ pipeline {
                {
       "artifacts":[
       {
-         "name":"sp-boot-app212.jar",
-          "version": "1.212",
-         "semanticVersion": "1.212.0",
+         "name":"sp-boot-app213.jar",
+          "version": "1.213",
+         "semanticVersion": "1.213.0",
          "repositoryName":"MSNAutomation"
              }
            ]
          }""")
-              snDevOpsPackage(name: "devops_pipeline_demo_212", artifactsPayload: """
+              snDevOpsPackage(name: "devops_pipeline_demo_213", artifactsPayload: """
               {"artifacts": 
                [
                   {
-                     
-                     "name": "sp-boot-app212.zip",
-                     "repositoryName": "bm-artifacts-repo",
-                     "pipelineName": "Average App Pipeline",
-                     "taskExecutionNumber":"212",
-                     "stageName":"Create Artifact for prod",
-                     "branchName": "master"
-                   }
+         "name":"sp-boot-app213.jar",
+          "version": "1.213",
+         "semanticVersion": "1.213.0",
+         "repositoryName":"MSNAutomation"
+             }
                  ]
                 }""")
                 
