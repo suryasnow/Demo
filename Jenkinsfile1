@@ -3,9 +3,7 @@ pipeline {
    tools {
       maven 'Maven'
    }
-    environment {
-	 SCANNER_HOME = tool 'sonarScanner'
-	}  
+ 
    stages {
        stage("Build") {
                 steps {
@@ -58,13 +56,7 @@ pipeline {
                 
            }
         }
-      stage('CodeCoverage') {
-                 steps {
-                    
-                    echo 'sonar summaries....'
-                    sonarSummaries()                    
-                 }
-      }  
+     
   
       stage("Deploy") {
              steps{ 
@@ -77,15 +69,5 @@ pipeline {
       
   }
   
-  def sonarSummaries() {
 
-   //withSonarQubeEnv('Sonar_Cloud') {
-       //sh '${SCANNER_HOME}/bin/sonar-scanner -Dproject.settings=${SCANNER_HOME}/conf/qa-sonar-scanner-cloud.properties'
-   
-	//}
-	
-    withSonarQubeEnv('sonarQube_local') {
-       	sh '${SCANNER_HOME}/bin/sonar-scanner -Dproject.settings=${SCANNER_HOME}/conf/qa-sonar-scanner.properties'
-   		// sh '${SCANNER_HOME}/bin/sonar-scanner -Dproject.settings=${SCANNER_HOME}/conf/sonar-scanner.properties'
-	}
 }
