@@ -61,7 +61,7 @@ pipeline {
       stage("Deploy") {
              steps{ 
  
-                
+              echo "i am in the master branch"  
               // snDevOpsChange()
                   echo ">> Deploy in prod"
               }
