@@ -1,1 +1,102 @@
-Test
+def semanticVersion = "${env.BUILD_NUMBER}.0.0"
+def packageName = "devops_pipeline_demo_${env.BUILD_NUMBER}"
+def version = "${env.BUILD_NUMBER}.0"
+def artifactname = "sp-boot-app.jar"
+def repoName = "sp-boot-app-repo"
+
+pipeline {
+   agent any
+   tools {
+        maven 'Maven'
+    }
+    environment {
+     SCANNER_HOME = tool 'sonarScanner'
+    }
+    
+    stages {
+          stage('Build') {
+                stages {
+                      stage("Build_Nested") {
+                        steps {
+                          echo"build 1.1 executed"
+                      sh'mvn clean'
+                      sleep 10
+                  snDevOpsArtifact(artifactsPayload: """{"artifacts": [{"name": "${artifactname}", "version": "1.${env.BUILD_NUMBER}","semanticVersion": "1.${env.BUILD_NUMBER}.0","repositoryName": "${repoName}"}],"branchName":"master"}""")
+                          sleep 5
+                      snDevOpsPackage(name: "${packageName}-${env.BUILD_NUMBER}", artifactsPayload: """{"artifacts":[{"name": "${artifactname}", "version": "1.${env.BUILD_NUMBER}", "repositoryName": "${repoName}"}], "branchName":"master"}""")
+                                sleep 20
+                      snDevOpsChange()
+                          //sonarSummaries()
+                        } 
+                      }// end of build 1.1
+                  
+                }// end of stages
+            
+
+            
+          }// end of build1
+        
+            stage('Test') {
+                      parallel 
+                      {
+                            stage('parallelTest1') {
+                                // Nested stage inside parallel
+                                stages {
+                                      stage("nested_inside_parallel") {
+                                                      steps {
+                                                        echo'nested_inside_parallel'
+                                                        sh'mvn test -Dtest="unittests.*" -Dpublish'
+                                                                    sleep 5
+                                                    //junit"**/target/surefire-reports/*unittests.*.xml"
+                                                    sleep 15
+                                                      }
+                                                      post{
+                                                        success{
+                                                          echo'Test1-success'
+                                                          junit"**/target/surefire-reports/*unittests.*.xml"
+                                                        }
+                                                      }
+                                                      }
+                                                                stage("Deploy1")           {
+                                                      steps {
+                                                        echo'CR1'
+                                                        snDevOpsChange()
+                                                      }
+                                                      }
+                                  
+                                }// end of stages
+                            } // end of parallelTest1
+                            stage('parallelTest2') {
+                                    stages {
+                                      stage("nested_inside_parallel2") {
+                                          steps {
+                                           sleep 20
+                                            sh 'mvn test -Dtest="ppmtests.*" -Dpublish'
+                                            echo'Test2 in progress'
+                                        sleep 5
+                                        //junit"**/target/surefire-reports/*ppmtests.*.xml"
+                                        sleep 15
+                                            //snDevOpsChange()
+                                              //sonarSummaries()
+                                          }
+                                           post{
+                                           success{
+                                             echo'Test2-success'
+                                             junit"**/target/surefire-reports/*ppmtests.*.xml"
+                                             }
+                                             }
+                                         }
+                                          stage("Deploy2") {
+                                              steps {
+                                             echo'CR2'
+                                             snDevOpsChange()
+                                                 }
+                                            }
+                                    }//end of stages             
+                            }// end of parallelTest2
+                        
+                      }// end of parallel
+                }// end of Test
+                
+    } // end of stages
+} // end of pipeline
