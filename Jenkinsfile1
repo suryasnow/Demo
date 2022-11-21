@@ -62,7 +62,7 @@ pipeline {
              steps{ 
  
               echo "i am in the master branch"  
-              // snDevOpsChange()
+               snDevOpsChange()
                   echo ">> Deploy in prod"
               }
       }      
