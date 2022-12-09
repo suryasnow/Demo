@@ -1,0 +1,61 @@
+pipeline {
+   agent any
+   tools {
+      maven 'Maven'
+   }
+   stages {
+       stage("Build") {
+                steps {
+                    echo "Building" 
+                    sh 'mvn -X clean install -DskipTests'
+                }
+       }
+        stage("Test") {
+           steps {
+               echo "Testing"
+               sh 'mvn test'
+           }
+          post {
+                always {
+                    junit '**/target/surefire-reports/*.xml' 
+                }
+          }
+        }
+      
+      stage("Create Artifact for prod") {
+           steps {
+              echo "Creating artifact"
+              sh 'mvn package'
+              sleep 3
+              snDevOpsArtifact(artifactsPayload:"""
+               {
+      "artifacts":[
+      {
+         "name":"sp-boot-app1.jar",
+          "version": "1.${BUILD_NUMBER}",
+         "semanticVersion": "1.${BUILD_NUMBER}.0",
+         "repositoryName":"MSNAutomation"
+             }
+           ]
+         }""")
+              snDevOpsPackage(name: "devops_pipeline_demo_$BUILD_NUMBER", artifactsPayload: """
+              {"artifacts": 
+               [
+                  {
+                     
+                     "name": "sp-boot-app1.zip",
+                     "repositoryName": "bm-artifacts-repo",
+                     "pipelineName": "Average App Pipeline",
+                     "taskExecutionNumber":"${env.BUILD_NUMBER}",
+                     "stageName":"Create Artifact for prod",
+                     "branchName": "master"
+                   }
+                 ]
+                }""")
+                snDevOpsChange()
+           }
+           
+        }  
+                
+  }
+}

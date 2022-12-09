@@ -1,0 +1,151 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Build
+    displayName: Build
+    jobs:
+      - job: "j1"
+        steps:
+          - task: Bash@3
+            inputs:
+              targetType: "inline"
+              script: |
+                # Write your commands here
+
+                echo 'Hello world updated'
+  - stage: Build2
+    displayName: Build2
+    jobs:
+      - job: "j1"
+        steps:
+          - task: Bash@3
+            inputs:
+              targetType: "inline"
+              script: |
+                # Write your commands here
+
+                echo 'here is the new build'
+  - stage: Test
+    displayName: Test
+    jobs:
+      - job: "j2"
+        steps:
+          # - task: SonarCloudPrepare@1
+          #   inputs:
+          #     SonarCloud: 'SonarCloud-ServieConnection'
+          #     organization: 'rohitkumarroy'
+          #     scannerMode: 'Other'
+          #     extraProperties: |
+          #       # Additional properties that will be passed to the scanner, 
+          #       # Put one key=value per line, example:
+          #       # sonar.exclusions=**/*.bin
+          #       sonar.projectKey=rohitkumarroy_PublicMavenProject
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.8'
+              mavenVersionOption: 'Default'
+              mavenOptions: '-Xmx3072m'
+              mavenAuthenticateFeed: false
+              effectivePomSkip: false
+              sonarQubeRunAnalysis: false
+          # - task: SonarCloudPrepare@1
+          #   inputs:
+          #     SonarCloud: 'SonarCloud-ServieConnection'
+          #     organization: 'rohitkumarroy'
+          #     scannerMode: 'Other'
+          # - task: SonarCloudPublish@1
+          #   inputs:
+          #     pollingTimeoutSec: '300'
+          # - task: ServiceNow-DevOps-Build-Sonar-Registration@1
+          #   inputs:
+          #     connectedServiceName: 'emprroy1-SnDevOpsProject-ServiceNow DevOps Service Connection'
+          #     sonarProjectKey: 'rohitkumarroy_PublicMavenProject'
+          #     sonarInstanceUrl: 'https://sonarcloud.io/'
+  - stage: ArtifactAndPackage
+    jobs:
+          - job: 'j3'
+            pool: server
+            steps:
+            - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+              inputs:
+                connectedServiceName: 'ADO_S_CONNECTION1'
+                artifactRegistrationPayload: |
+                  {
+                     "artifacts": [
+                        {
+                           "name": "az-artifact-dmv10",
+                           "version": "1.$(build.buildId)",
+                           "semanticVersion": "1.$(build.buildId).0",
+                           "repositoryName": "repo10-dmv"
+                        },
+                        {
+                           "name": "az-artifact-dmv2",
+                           "version": "1.$(build.buildId)",
+                           "semanticVersion": "1.$(build.buildId).0",
+                           "repositoryName": "empb5-old-dmv"
+                        }
+                     ],
+                     "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                     "taskExecutionNumber": "$(build.buildId)",
+                     "stageName": "$(System.StageDisplayName)/$(system.jobDisplayName)",
+                     "branchName": "$(build.sourceBranchName)"
+                  }
+                artifactToolIdExists: false
+            - task: ServiceNow-DevOps-Server-Package-Registration@1
+              inputs:
+                connectedServiceName: 'ADO_S_CONNECTION1'
+                packageRegistrationPayload: |
+                  {
+                      "name": "pkg$(build.buildId)",
+                      "artifacts": [
+                      {
+                          "name": "az-artifact10-dmv",
+                          "repositoryName": "repo10-dmv",
+                          "version": "1.$(build.buildId)",
+                          "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+                          "taskExecutionNumber":"$(build.buildId)",
+                          "stageName":"$(System.StageName)/$(system.jobDisplayName)",
+                          "branchName":"$(build.sourceBranchName)"
+                      }],
+                      "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+                      "taskExecutionNumber":"$(build.buildId)",
+                      "stageName":"$(System.StageName)/$(system.jobDisplayName)",
+                      "branchName":"$(build.sourceBranchName)"
+                  }
+                artifactToolIdExists: false
+  - stage: Deploy
+    displayName: Deploy
+    jobs:
+      - job: j4
+        pool: server
+        steps:
+        - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+          inputs:
+            connectedServiceName: 'ADO_S_CONNECTION1'
+            changeRequestDetails: |
+              {
+                "attributes": {
+                  "short_description": "Test desc",
+                  "priority": "1",
+                  "start_date": "2021-02-05 08:00:00",
+                  "justification": "test just",
+                  "description": "test descri",
+                  "cab_required": true,
+                  "work_notes": "test work"
+                },
+                "setCloseCode": false
+              }
+ 
