@@ -4,7 +4,7 @@ def pipelineName = "SunilPipelines/Sunil-Scripted-Pipeline-Sonar"
 def semanticVersion = "${env.BUILD_NUMBER}.0.0"
 def packageName = "devops-snow-build-pkg_${env.BUILD_NUMBER}"
 def version = "${env.BUILD_NUMBER}.0"
-def pkgName = "devops-snow-build-pkg"
+def pkgName = "devops-snow-build-pkg_${env.BUILD_NUMBER}"
 
 pipeline {
   agent any
