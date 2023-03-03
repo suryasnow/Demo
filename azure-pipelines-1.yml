@@ -1,19 +1,131 @@
-# Starter pipeline
+ # Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
 trigger:
-- master
+- None
+variables:
+- group: Variable Group
+name: $(Date:yyyyMMdd)$(Rev:.r)
+stages:
+- stage: Stage1
+  jobs:
+  - job: 'Stage1Job1'
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your commands here
+          echo "$(System.JobAttempt)"
+          echo "$(System.PhaseAttempt)"
+- stage: Stage2
+  # pool:
+  #  name: Default
+  dependsOn: [Stage1]
+  jobs:
+  - job: "Stage2Job1"
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your commands here
+          echo "$(System.JobAttempt)"
+          echo "$(System.PhaseAttempt)"
+    # - task: Maven@3
+    #   inputs:
+    #         mavenPomFile: 'pom.xml'
+    #         publishJUnitResults: true
+    #         testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    #         javaHomeOption: 'JDKVersion'
+    #         mavenVersionOption: 'Default'
+    #         mavenAuthenticateFeed: false
+    #         effectivePomSkip: false
+    #         sonarQubeRunAnalysis: false
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)'
+        ArtifactName: 'Build Artifact 1'
+        publishLocation: 'Container'
+    # - task: SonarCloudPrepare@1
+    #   inputs:
+    #           SonarCloud: 'SonarCloud-ServieConnection'
+    #           organization: 'venkataprasadsirigi'
+    #           scannerMode: 'Other'
+    #           extraProperties: |
+    #             # Additional properties that will be passed to the scanner,
+    #             # Put one key=value per line, example:
+    #             # sonar.exclusions=**/*.bin
+    #             sonar.projectKey=venkataprasadsirigi_DevOpsTestProject
+    #             sonar.projectName=DevOpsTestProject
+    # - task: SonarCloudPrepare@1
+    #   inputs:
+    #           SonarCloud: 'SonarCloud-ServieConnection'
+    #           organization: 'venkataprasadsirigi'
+    #           scannerMode: 'Other'
+    # - task: SonarCloudPublish@1
+    #   inputs:
+    #           pollingTimeoutSec: '300'
+    # - task: ServiceNow-DevOps-Build-Sonar-Registration@1
+    #   inputs:
+    #     connectedServiceName: '$(ServiceNowConnection)'
+    #     sonarProjectKey: 'venkataprasadsirigi_DevOpsTestProject'
+    #     sonarInstanceUrl: 'https://sonarcloud.io/'
+- stage: Stage3
+  dependsOn: [Stage1]
+  jobs:
+  - job: 'Stage3Job1'
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your commands here
+          echo "$(System.JobAttempt)"
+          echo "$(System.PhaseAttempt)"
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Pipeline.Workspace)'
+        artifact: 'Pipeline Artifact 1'
+        publishLocation: 'pipeline'
+    # - task: UniversalPackages@0
+    #   inputs:
+    #     command: 'publish'
+    #     publishDirectory: '$(Build.ArtifactStagingDirectory)'
+    #     feedsToUsePublish: 'internal'
+    #     vstsFeedPublish: '3a1d79e8-6f2d-4713-a645-918b88dc451c/f9e448d5-1ecc-4259-b978-aa04cf64d6af'
+    #     vstsFeedPackagePublish: 'universal-artifact'
+    #     versionOption: 'patch'
+    # - task: UniversalPackages@0
+    #   inputs:
+    #     command: 'publish'
+    #     publishDirectory: '$(Build.ArtifactStagingDirectory)'
+    #     feedsToUsePublish: 'internal'
+    #     vstsFeedPublish: '3a1d79e8-6f2d-4713-a645-918b88dc451c/f9e448d5-1ecc-4259-b978-aa04cf64d6af'
+    #     vstsFeedPackagePublish: 'universal-artifact 2'
+    #     versionOption: 'patch'
 
-pool:
-  vmImage: ubuntu-latest
+- stage: Converge
+  dependsOn: [Stage2, Stage3]
+  jobs:
+  - job: "ConvergeJob1"
+    steps:
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Write your commands here
+            echo "$(System.JobAttempt)"
+            echo "$(System.PhaseAttempt)"
+    # pool: server
+    # steps:
+    
+      
+    #        - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+    #          inputs:
+    #            connectedServiceName: '$(ServiceNowConnection)'
+    #            UpstreamJob: 'Stage3Job1'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    
